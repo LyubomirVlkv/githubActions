@@ -21,13 +21,13 @@ jobs:
 
     - name: Enter nginx folder
       run: cd nginxdocker
+      run: ls
 
     - name: Extract Docker Tag from dockertag text
       id: extract_tag
       run: |
         # Extract the version tag from README.md, assuming a format like "Docker Image Tag: v1.2.3"
         tag_line=$(cat dockertag)
-        tag=$(echo "$tag_line" | awk '{print $4}')  # Adjust field number if needed
         echo "Docker tag extracted: $tag"
         echo "tag=$tag" >> $GITHUB_ENV  # Expose the tag as an environment variable for later steps
 
