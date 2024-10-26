@@ -20,8 +20,9 @@ jobs:
         password: ${{ secrets.DOCKER_AUTH_KEY }}
 
     - name: Enter nginx folder
-      run: cd nginxdocker
-      run: ls
+      run: |
+        cd nginxdocker
+        ls
 
     - name: Extract Docker Tag from dockertag text
       id: extract_tag
