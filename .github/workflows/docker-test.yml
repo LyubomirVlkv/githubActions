@@ -29,7 +29,9 @@ jobs:
         echo "tag=$tag" >> $GITHUB_ENV  # Expose the tag as an environment variable for later steps
 
     - name: Build docker image
-      run: docker build -t my-image:${{ env.tag }} . # Replace with your image and tag
+      run: |
+        cd nginxdocker
+        docker build -t my-image:${{ env.tag }} . # Replace with your image and tag
 
     - name: Run Docker Container
       run: docker run -d --name -p 8080:80 test_container my-image:${{ env.tag }}
