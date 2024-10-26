@@ -59,8 +59,8 @@ jobs:
 
     - name: Tag image
       run: |
-        docker tag my-image:${{ tag }} westfy/githubactions:${{ tag }}
+        docker tag my-image:${{ env.tag }} westfy/githubactions:${{ env.tag }}
 
     - name: Tag image
       run: |
-        docker push westfy/githubactions:${{ tag }}
+        docker push westfy/githubactions:${{ env.tag }}
