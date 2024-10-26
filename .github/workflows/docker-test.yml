@@ -5,64 +5,62 @@ on:
     # Allows manual run
   push:
     branches:
-      - main  # Runs when code is pushed to the main branch
-
+      - main
 jobs:
   run_docker_container:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_AUTH_KEY }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_AUTH_KEY }}
    
-    - name: Enter nginx folder
-      run: cd nginxdocker
+      - name: Enter nginx folder
+        run: cd nginxdocker
     
-    - name: Extract Docker Tag from dockertag text
-      id: extract_tag
-      run: |
-        # Extract the version tag from README.md, assuming a format like "Docker Image Tag: v1.2.3"
-        tag_line=$(grep -i "Docker Image Tag:" dockertag)
-        tag=$(echo "$tag_line" | awk '{print $4}')  # Adjust field number if needed
-        echo "Docker tag extracted: $tag"
-        echo "tag=$tag" >> $GITHUB_ENV  # Expose the tag as an environment variable for later steps
+      - name: Extract Docker Tag from dockertag text
+        id: extract_tag
+        run: |
+          # Extract the version tag from README.md, assuming a format like "Docker Image Tag: v1.2.3"
+          tag_line=$(grep -i "Docker Image Tag:" dockertag)
+          tag=$(echo "$tag_line" | awk '{print $4}')  # Adjust field number if needed
+          echo "Docker tag extracted: $tag"
+          echo "tag=$tag" >> $GITHUB_ENV  # Expose the tag as an environment variable for later steps
 
-    - name: Build docker image
-      run: docker build -t my-image:${{ env.tag }} . # Replace with your image and tag
+      - name: Build docker image
+        run: docker build -t my-image:${{ env.tag }} . # Replace with your image and tag
 
-    - name: Run Docker Container
-      run: docker run -d --name -p 8080:80 test_container my-image:${{ env.tag }}
-      id: run_container
+      - name: Run Docker Container
+        run: docker run -d --name -p 8080:80 test_container my-image:${{ env.tag }}
+        id: run_container
 
-    - name: Check if Container is Running
-      run: |
-        url="http://localhost:8080"
-        status_code=$(curl -o /dev/null -s -w "%{http_code}\n" "$url")
+      - name: Check if Container is Running
+        run: |
+          url="http://localhost:8080"
+          status_code=$(curl -o /dev/null -s -w "%{http_code}\n" "$url")
 
-        if [ "$status_code" -ne 200 ]; then
-          echo "Error: Received status code $status_code instead of 200."
-          exit 1  # Fails the job if the status code isn't 200
-        else
-          echo "Success: Received status code 200."
-        fi
-      #run: docker ps --filter "name=test_container" --filter "status=running" | grep test_container
+          if [ "$status_code" -ne 200 ]; then
+            echo "Error: Received status code $status_code instead of 200."
+            exit 1  # Fails the job if the status code isn't 200
+          else
+            echo "Success: Received status code 200."
+          fi
+        #run: docker ps --filter "name=test_container" --filter "status=running" | grep test_container
 
-    - name: Stop and Remove Container
-      if: always()
-      run: |
-        docker stop test_container
-        docker rm test_container
+      - name: Stop and Remove Container
+        if: always()
+        run: |
+          docker stop test_container
+          docker rm test_container
 
-   - name: Tag image
-      run: |
-        docker tag my-image:${{ tag }} westfy/githubactions:${{ tag }}
+     - name: Tag image
+        run: |
+          docker tag my-image:${{ tag }} westfy/githubactions:${{ tag }}
    
-   - name: Tag image
-      run: |
-        docker push westfy/githubactions:${{ tag }}        
+     - name: Tag image
+        run: |
+          docker push westfy/githubactions:${{ tag }}
