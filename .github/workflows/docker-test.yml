@@ -23,6 +23,7 @@ jobs:
       run: |
         cd nginxdocker
         ls
+        pwd
 
     - name: Extract Docker Tag from dockertag text
       id: extract_tag
