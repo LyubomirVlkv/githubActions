@@ -19,15 +19,10 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_AUTH_KEY }}
 
-    - name: Enter nginx folder
-      run: |
-        cd nginxdocker
-        ls
-        pwd
-
     - name: Extract Docker Tag from dockertag text
       id: extract_tag
       run: |
+        cd nginxdocker
         # Extract the version tag from README.md, assuming a format like "Docker Image Tag: v1.2.3"
         tag_line=$(cat dockertag)
         echo "Docker tag extracted: $tag"
