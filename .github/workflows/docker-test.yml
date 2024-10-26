@@ -24,7 +24,7 @@ jobs:
       run: |
         cd nginxdocker
         # Extract the version tag from README.md, assuming a format like "Docker Image Tag: v1.2.3"
-        tag_line=$(cat dockertag)
+        tag=$(cat dockertag)
         echo "Docker tag extracted: $tag"
         echo "tag=$tag" >> $GITHUB_ENV  # Expose the tag as an environment variable for later steps
 
